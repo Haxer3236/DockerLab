@@ -37,3 +37,4 @@ docker exec -it recovery-db psql -U postgres -c "SELECT * FROM students;"
 docker exec -i student-db psql -U postgres -c "CREATE TABLE students (name VARCHAR(50));"
 
 docker exec -i student-db psql -U postgres -c "INSERT INTO students (name) VALUES ('John');"
+
