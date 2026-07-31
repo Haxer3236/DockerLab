@@ -1,0 +1,39 @@
+# List the docker vlume 
+docker volume ls
+# create the docker volume
+docker volume create prod-db
+docker volume create test-db
+docker volume create temp-logs
+# attach the docker volume to the conatianer  and container must have in runing stage
+# -v flag use to the attch the volume.
+# prod-db is the docker volume
+# data is the container mount point
+# -itd is make sure that container is in runing stage  
+docker run -itd --name prod-app -v prod-db:/data alpine:latest
+# attach the docker volume to the conatianer  and container must have in stoped(Exited) stage
+# -v flag use to the attch the volume.
+# test-app is the docker volume
+# data is the container mount point
+#  if we run the docker run command without "-itd" container is created in stop staged
+docker run --name test-app -v test-db:/data alpine:latest
+
+#delete all the volume which is not attached with any container.
+docker volume prune -f
+
+#Creating the host volume to the container with modern standards explicit --mount syntax
+docker run -itd --name dev-app --mount type=bind,source=$(pwd)/src,target=/app node:alpine
+# Executing the alpine container. In alpine container have the sh shell 
+docker exec -it 4f230ec8af1d sh
+
+
+docker exec -it student-db psql -U postgres -c "SELECT *  FROM students;"
+
+docker run -itd --name recovery-db -e POSTGRES_PASSWORD=mysecret -v pg-data:/var/lib/postgresql/data postgres:14
+
+docker exec -it recovery-db psql -U postgres -c "SELECT * FROM students;"
+
+
+
+docker exec -i student-db psql -U postgres -c "CREATE TABLE students (name VARCHAR(50));"
+
+docker exec -i student-db psql -U postgres -c "INSERT INTO students (name) VALUES ('John');"

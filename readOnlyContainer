@@ -1,0 +1,78 @@
+<!-- Scenario
+Your Security Architect has enforced a "Defense in Depth" policy for all stateful services. You are tasked with deploying a Redis instance that adheres to the strict Immutable Container Standard .
+
+The challenge is that Redis requires write access to disk for snapshots (dump.rdb), but the security policy explicitly forbids writable root filesystems. You must architect a deployment that satisfies the immutability requirement without breaking the application's ability to persist data.
+
+Task
+Working directory: /home/user/cache-lab/
+
+1. The Hardening (Objectives): Deploy a container named hardened-redis using the image redis:alpine that strictly adheres to the following Security Policy:
+
+Immutability: The root filesystem must be Read-Only.
+
+Persistence: Application data must be persisted to a Docker volume named secure-data. (You must identify the correct mount point required by Redis).
+
+Identity: The process must execute as the dedicated redis service user (UID 999) .
+
+Least Privilege: The container must have Zero (0) Linux capabilities enabled .
+
+2. Verification:
+
+The container must be in the Up state (not Restarting/Exited).
+docker inspect must confirm the ReadOnly status and the CapDrop: ["ALL"] configuration.
+Data written to Redis must survive a container restart (persisted in the volume).
+Expected Outcome
+hardened-redis is running stable.
+Executing touch /root/test inside the container fails (Read-Only proof).
+Executing ping 8.8.8.8 inside the container fails (Capability drop proof). -->
+
+#Command used in terminbal to run the container
+
+    6  docker volume ls
+    7  docker volume create secure-data
+    8  docker run -d --name hardened-redis --read-only -v secure-data:/data --user 999 --cap-drop ALL redis:alpine 
+    9  docke ps
+   10  docker ps
+   11  docker exec -it b14850704ea0 sh -c "ping 8.8.8.8"
+   12  docker exec -it b14850704ea0 sh -c "touch /root/test"
+   13* 
+   14  docker exec -it b14850704ea0 sh -c "touch /root/test"
+   15  history
+
+....................................
+Complete Solution Script
+#!/bin/bash
+
+
+# 1. The Solution: Hardened Redis
+echo "Deploying Immutable Redis..."
+
+# Create volume for persistence (Requirement 2)
+docker volume create secure-data
+
+# Deploy with Security Policy:
+# - --read-only: Satisfies Immutability requirement
+# - -v secure-data:/data: Fixes the crash by making /data writable (via volume)
+# - --user 999: Satisfies Identity requirement
+# - --cap-drop ALL: Satisfies Least Privilege requirement
+docker run -d \
+  --name hardened-redis \
+  --read-only \
+  --user 999 \
+  --cap-drop ALL \
+  -v secure-data:/data \
+  redis:alpine
+
+# 2. Verify Status
+echo "Verifying deployment..."
+sleep 2
+if [ "$(docker inspect -f '{{.State.Running}}' hardened-redis)" == "true" ]; then
+    echo "Container is RUNNING."
+    # Functional Check: Set a key
+    docker exec hardened-redis redis-cli set security enabled >/dev/null
+    echo "Redis Response: $(docker exec hardened-redis redis-cli get security)"
+else
+    echo "Container FAILED. Logs:"
+    docker logs hardened-redis
+fi
+.......................................

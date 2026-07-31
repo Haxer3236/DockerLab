@@ -1,0 +1,58 @@
+
+# Scenario
+# A security audit of your organization's CI/CD pipeline has flagged the legacy-node-app Docker image as a Critical Risk.
+
+# The current build process (defined in Dockerfile.bad) produces a bloated artifact (1.1GB+) that runs as root and exposes API keys in the image metadata.
+
+# Your task is to refactor the build process to produce a Hardened, Production-Ready Image that complies with the organization's "Immutable Supply Chain" policy.
+
+# Task
+# Working directory: /home/user/supply-chain/
+
+# 1. Analyze the Baseline:
+
+# The environment is pre-loaded with the source code and a Dockerfile.bad.
+# A vulnerable image named bad-app:1.0 has already been built for you. Run docker images and docker inspect bad-app:1.0 to see the bloat and exposed secrets.
+# 2. The Refactoring (Objectives): Create a new file named Dockerfile (no extension) that meets the following strict security controls:
+
+# Attack Surface Reduction: The final image size must be reduced by at least 80% (Target: < 200MB).
+
+# Constraint: You must implement Multi-Stage Builds to strip out all build-time dependencies.
+
+# Principle of Least Privilege: The application runtime must be owned and executed by a non-root user.
+
+# Secret Hygiene: The API_KEY must be completely removed from the image layers. It must not appear in docker inspect or docker history.
+
+# Expected Outcome
+# Size: docker images shows the new secure-app:1.0 image is under 200MB.
+# User: docker run … id confirms a UID other than 0 (Root).
+# Secrets: docker inspect shows no sensitive environment variables.
+
+
+
+####################################################
+# This is the bad Docker image
+FROM node:18
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY server.js .
+ENV API_KEY="SECRET_12345"
+CMD ["node", "server.js"]
+
+
+
+####################################################
+
+#This is after correction the image file Multistage build 
+
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package.json .
+RUN npm install
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app /app
+USER node
+COPY server.js .
+CMD ["node", "server.js"]

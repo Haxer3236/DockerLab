@@ -1,0 +1,21 @@
+#/bin/bash
+cd forensic-lab/
+docker save leaky-app:v1 -o image.tar
+mkdir -p unpacked
+tar -xf image.tar -C unpacked
+for layer in unpacked/*/layer.tar; do
+    # Search for the file path inside the tar
+    # capturing the full path (e.g., app/api_key.txt)
+    FILE_PATH=$(tar -tf "$layer" 2>/dev/null | grep "api_key.txt" | head -n 1)
+
+    if [ -n "$FILE_PATH" ]; then
+        echo "Found file at $FILE_PATH in layer archive $layer"
+
+        # Extract the specific file using its full path
+        tar -xf "$layer" "$FILE_PATH"
+
+        # Move it to the required output filename
+        mv "$FILE_PATH" recovered_secret.txt
+        break
+    fi
+done

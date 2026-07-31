@@ -1,0 +1,11 @@
+    
+docker ps
+docker ps -a
+# Creating the docker volume
+docker volume create transaction-logs
+#Run the container 
+docker run -itd --name log-generator -v transaction-logs:/var/log/app alpine sh -c "echo 'Transaction #1' > /var/log/app/access.log && sleep 3600"
+docker ps
+#Runing a temporary container and taking the backup from the conteainer to the host archive directory
+docker run --rm --name backup-agent -v transaction-logs:/input -v $(pwd)/archive:/output alpine sh -c "tar -czf /output/backup.tar.gz -C /input ."
+   

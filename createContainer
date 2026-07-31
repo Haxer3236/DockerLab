@@ -1,0 +1,17 @@
+#checking docker is installed or not
+docker --version
+#check docker images
+docker images
+#downloading the image from hub
+docker pull ubuntu:latest
+#creating and run the container interacting with bash terminal
+docker run -it --name test1 ubuntu:latest bash
+#cheking the all stop and start container
+docker ps -a
+# run the containde in detached mode.
+ docker run -d --name webserver nginx:latest
+ #stop the container
+ docker stop container_ID/containerName
+ # Start the container
+docker start container_ID/containerName
+ 

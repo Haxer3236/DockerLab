@@ -1,0 +1,12 @@
+#delete the docker images
+-> docker rmi a7be6198544f
+#check create docker images
+-> docker images
+#ull docker image from hub and redirect the output in answer.txt
+-> docker pull nginx:1.23.4 > /home/user/answer.txt
+#Remane Docker images
+docker tag old_imagename newImageName
+#Map the port to expose over the internet
+docker run -p hostPort:containerPort myimage
+docker run -p 8080:5000 myimage
+

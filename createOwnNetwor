@@ -1,0 +1,44 @@
+#Creating our own network
+
+
+#Create the own network name internal-net
+    docker network create internal-net
+# create a internal docker network using --internal flag
+    docker network create --internal vault-net
+#List the all network 
+    docker network ls
+#Creating the container with name db-service with own network
+    docker run -d --name db-service --network internal-net alpine sh -c "tail -f /dev/null"
+#Creating the second container with name web-app with own network
+    docker run -d --name web-app --network internal-net alpine sh -c "ping db-service"
+# enter the both container and pinging each one by one
+    docker exec -it web-app sh
+    docker exec -it db-service sh
+#Connect the network with runing conatainer 
+#(network name - private-net, container name backen-api)
+    docker network connect private-net backend-api 
+#It disable the comunication from the container to tcp request
+    sudo iptables -I DOCKER-USER -s 203.0.113.0/24 -p tcp -j DROP
+#
+   docker exec -it 38cafe431f49 sh -c "ping 8.8.8.8"
+   46  sudo iptables -L
+   47  docker network inspect  vault-net
+   50  docker network disconnect vault-net secure-db
+   51  docker network rm vault-net
+   56  docker network ls
+   57  docker ps
+   58  docker network connect vault-net secure-db
+   59  docker network connect vault-net api-gateway
+   60  docker network disconnect bridge api-gateway
+   61  docker exec -it secure-db sh -c "ping 8.8.8.8"
+   62  docker exec -it api-gateway sh -c "ping 8.8.8.8"
+   63  docker exec -it api-gateway sh -c "ping secure-db"
+
+
+#CPU, Memory , PID  limitation
+docker run -d --name fortress-app --cpus=0.5 --memory=256M --pids-limit=50 unstable-app:latest
+
+
+   
+
+    

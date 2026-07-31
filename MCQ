@@ -1,0 +1,142 @@
+Q.1 What is the key difference between the Shell form (RUN pip install flask) 
+and the Exec form (RUN ["pip", "install", "flask"]) of the RUN instruction?
+Ans-1 The Shell form executes the command in a shell (/bin/sh -c), allowing for 
+environment variable expansion, while the Exec form runs the executable directly.
+
+Q.2 According to Dockerfile best practices, why is COPY preferred over ADD for moving local files into an image?
+Ans.2 COPY is a transparent instruction for simple file copying, whereas ADD has implicit behaviors like auto-extracting
+ tarballs and fetching URLs which can lead to unexpected results.
+
+ Q.3 A Dockerfile contains the following two instructions: ENTRYPOINT ["python"] CMD ["app.py"] What happens if a user runs the container using the command docker run myimage --version?
+ Ans.3 The container runs python --version because the runtime argument overrides CMD and appends to ENTRYPOINT. 
+
+ Q.4 If a user runs docker build . in a directory containing 1GB of unrelated video files, the build process starts very slowly. Based on the concept of "Build Context," what is happening?
+ Ans.4 The Docker CLI is sending the entire contents of the current directory (the build context) to the Docker Daemon before the build begins.
+
+Q.5 To optimize build speed, why is it recommended to COPY requirements.txt and RUN pip install before COPY . . (copying the source code)?
+Ans.5 To utilize layer caching: dependencies change rarely, while source code changes frequently. This prevents re-running the installation step on every code change.
+
+Q.6 When Docker initializes a container, it creates a Read-Write layer (Upper Dir) for the container. However, deep inspection reveals a hidden, read-only layer inserted between the Image's top layer and the Container's Read-Write layer. This layer typically contains files like /etc/hosts and /etc/resolv.conf. What is the architectural purpose of this specific "Init Layer"?
+Ans. It provides a location to inject host-specific runtime configurations (like IP addresses) so that if the user executes docker commit, these environment-specific settings are excluded from the resulting image.
+
+Q.7 A developer builds an image where Layer 1 adds a 1GB file, and Layer 2 runs rm to remove that file. What is the impact on the final image size and the filesystem view?
+Ans. The image size remains large because the file still exists in Layer 1; Layer 2 simply adds a "whiteout" marker file to hide it.
+
+Q.8 In an OverlayFS storage driver setup, a container needs to modify a configuration file named /app/config.json. This file currently exists in the "Lower Dir" (read-only image layer). According to the Copy-on-Write (CoW) mechanism, what is the exact sequence of operations the storage driver performs?
+Ans. The entire file is copied from the Lower Dir to the Upper Dir (container layer), and the modification is applied to this copy.
+
+Q.9 In a Multistage Build, you define a builder stage to compile an application and a second lean stage for the final image. Which Dockerfile instruction correctly extracts a specific file (e.g., myapp) from the builder stage and places it into the current stage?
+Ans. COPY --from=builder /app/myapp .
+
+Q.10 A developer runs docker build . and notices the "Sending build context to Docker daemon" step is taking a very long time, transferring 800MB of data due to heavy local folders like node_modules and .git. What is the correct, standard solution to prevent these files from being uploaded to the daemon without deleting them from the host?
+Ans. Create a .dockerignore file in the root directory and list node_modules/ and .git/ inside it.
+
+Q.11 Q2. Runtime Forensics (Host vs. Container PID)
+Solved
+You suspect a containerized process is consuming excessive CPU. You cannot use Docker commands. You inspect /var/lib/docker/containers/<ID>/config.v2.json and find "State": { "Pid": 4500 }. You then run ps -ef on the host. Which of the following statements correctly describes the relationship between the process with PID 4500 on the host and the process inside the container?\
+Ans. PID 4500 is the container's PID 1 as seen from the host's PID Namespace. It is the same process as the one inside the container, just identified by a different number externally.
+
+Q.12 Q3. Storage Performance (Copy-on-Write)Solved
+A container running a legacy database has a 50GB data file residing in the Lower Dir (Image Layer). The application needs to append a single 1KB log entry to this 50GB file. Using the standard Overlay2 driver, what is the performance impact of this operation?
+Ans. High impact. OverlayFS works at the file level. It must copy the entire 50GB file from the Lower Dir to the Upper Dir (up-copy) before the 1KB write can occur.
+
+Q.13  Image Anatomy (Manifest vs. Config)Solved
+When you execute docker pull python:3.9, Docker first fetches a Manifest List (or Index). What critical decision does the Docker client make based specifically on the data inside this Manifest List?
+Ans. It determines which set of layers (blobs) to download based on the host's CPU Architecture (amd64, arm64) and OS (Linux, Windows).
+
+Q.14Docker Save Artifacts
+ You run docker save my-image:v1 -o backup.tar and untar the result. You find a file named layer.tar inside one of the subdirectories. If my-image was built using a Dockerfile instruction COPY ./source /app, what does this layer.tar physically contain?
+ Ans. A standard tar archive containing only the files inside /app that were added by that specific COPY instruction.
+
+ Q.15  Layer Identification Unsolved
+Docker uses two different methods to identify layers: Layer IDs and Content Hashes (Digests). What is the primary distinction and purpose of the Content Hash (sha256:…)?
+Ans. It is a deterministic hash of the layer's actual content; if two different builds produce the exact same file changes, they will generate the same hash, allowing for layer deduplication across images.
+
+Q.16 A junior DevOps engineer encounters a "Permission Denied" error when their container tries to access a specific hardware device (/dev/mem) on the host. To fix it quickly, they add the --privileged flag to the docker run command, and the error disappears.
+During a security audit, you flag this as a critical vulnerability. What specific changes does the --privileged flag apply to the container that makes it significantly more dangerous than a standard container running as root?
+Ans. It enables all Linux Capabilities, disables the default Seccomp profile, and removes device cgroup restrictions.
+
+Q.17 Defense in Depth (Capabilities vs. Seccomp)
+SolvedYou are performing a security audit on a containerized environment. Your goal is to apply "Defense in Depth" by implementing redundant security layers.
+You want to specifically prevent a compromised container from mounting a new filesystem (e.g., mount -t tmpfs …). You decide to use Linux Capabilities as your primary defense and Seccomp as your secondary defense.
+Which combination of configurations achieves this specific restriction?
+Ans. Drop CAPSYSADMIN and use a Seccomp profile blocking the mount syscall.
+
+Q.18 Resource Constraints & OOM Killer
+Solved
+A developer is testing a memory-intensive data processing container on a host with 8GB of RAM. They run the container with the following flags to manage resource usage:
+docker run --memory=512m --memory-reservation=256m --memory-swap=512m my-app
+The application normally uses 200MB of RAM. Suddenly, a data spike causes the application to rapidly consume memory, reaching 513MB.
+According to Docker's resource management logic, what is the immediate consequence?
+Ans. The Kernel OOM (Out of Memory) killer terminates the process inside the container.
+
+Q.19 You are tasked with connecting a Docker container to an existing corporate NFS (Network File System) server. The server is strictly internal and does not have a specific Docker plugin. You successfully create the volume using the following command:
+docker volume create --driver local \
+--opt type=nfs \
+--opt o=addr=192.168.1.50,rw \
+--opt device=:/exports/data \
+project_share
+A junior engineer asks: "Why are we using the --driver local flag for a remote network share? Shouldn't we be using a network-specific driver?"
+What is the correct technical explanation? 
+Ans. The local driver acts as a passthrough to the Linux kernel's mount system call. It utilizes the host operating system's NFS client capabilities to mount the remote resource directly.
+
+Q.20
+The "Permission Denied" Trap (UID/GID)
+Solved
+You have built a secure application image. The Dockerfile ends with the instruction USER 1000 to ensure the application runs as a non-root user.
+You deploy this image with a new named volume: docker run -v app-data:/var/lib/app/data secure-image
+The application crashes immediately with an ACCESS: permission denied error when trying to write to /var/lib/app/data. You inspect the volume on the host and see: drwxr-xr-x root root … /var/lib/docker/volumes/app-data/_data
+What is the root cause of this issue?
+Ans. When Docker initializes a new named volume, it creates the underlying directory owned by root (UID 0). Since your process runs as UID 1000, it lacks write permissions to this root-owned directory.
+
+Q.21 You are running a production container that should only read configuration files from a volume and must never modify them. You want Docker itself to enforce this restriction so that even if the application is compromised, it cannot change the config files.
+Which command correctly mounts the volume in read-only mode?
+Ans. docker run -v config:/app/config:ro myapp
+
+
+
+.............................DOCKER NETWORKING....................................
+
+Q.22 You are debugging a connectivity issue. Your Docker bridge network is successfully routing packets using IP addresses (Layer 3) and ports (Layer 4). However, the application inside the container is failing to interpret the HTTP headers correctly.
+Which layer of the OSI model is responsible for this failure, and does Docker's default network driver manage it?
+Ans. Layer 7 (Application); No, Docker manages up to Layer 4, leaving Layer 7 protocols (HTTP/DNS) to the application itself.
+
+Q.23 You are deploying a high-frequency trading application where microsecond-level latency is critical. You decide to use the --network host driver to bypass the Docker bridge overhead.
+What is the immediate architectural consequence of this decision?
+Ans. The container completely loses network isolation; it shares the host's network namespace, and port conflicts will occur if multiple containers try to bind to the same port.
+
+Q.24 You are reviewing a docker-compose.yml file for a sensitive backend system. The configuration for the backend-net is defined as follows:
+YAML->
+networks:
+  backend-net:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+A developer reports that while their container on this network can successfully communicate with the database container (also on backend-net), the container fails to run apt-get update to fetch security patches from the internet.
+What is the technical explanation for this behavior?
+Ans. The internal: true flag explicitly removes the default gateway for external connectivity, effectively "air-gapping" the network from the internet while allowing inter-container communication.
+
+Q.25 You are deploying a multi-host Docker Swarm cluster over a public cloud infrastructure. Your security compliance officer requires that application data moving between nodes must be unreadable if packets are intercepted on the physical network.
+
+You create a network with: docker network create --driver overlay --opt encrypted secure-overlay
+Which statement accurately describes the protection provided by this command?
+Ans. It establishes an IPsec tunnel using AES-GCM to encrypt the Data Plane (application traffic) as it traverses between Swarm nodes.
+
+Q.26 To mitigate a DDoS attack, you manually added an iptables rule to the standard FORWARD chain on your Docker host to drop packets from a malicious IP range.
+However, you observe that traffic from that malicious IP is still reaching your containers.
+Why is your rule being bypassed, and where must you place it to be effective?
+Ans. Docker inserts its own rules into the DOCKER chain, which is evaluated before the standard FORWARD chain rules. You must place your rule in the DOCKER-USER chain, which Docker guarantees is evaluated first.
+
+Q.27 You discover a CI/CD pipeline container that was launched with the flag -v /var/run/docker.sock:/var/run/docker.sock. According to the Threat Model in your guide, why is this specific configuration considered equivalent to granting Root access to the host?
+Ans. It enables the container to send commands to the Docker Daemon to launch a "sibling" container with --privileged and -v /:/host, allowing modification of the host filesystem .
+
+Q.28 A developer attempts to secure their Dockerfile by deleting a secrets file after using it:
+Dockerfile->
+FROM alpine
+RUN echo "API_KEY=12345" > .env
+RUN ./setup.sh
+RUN rm .env
+A security scan still flags this image as compromised. Based on the "Secrets in Images" section, why did the rm command fail to secure the credential?
+Ans. The rm command only marks the file as deleted in the current layer; the file content still exists in the previous layer's immutable history and can be extracted .

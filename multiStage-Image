@@ -1,0 +1,92 @@
+<!-- Scenario
+Your team is preparing to deploy the core API to production. The current build process is unacceptable: the build context is huge (slowing down transfers), and the final image is over 500MB (slowing down deployments).
+
+You have been tasked with creating a "Production-Grade" pipeline. You must minimize the build context, implement a Multistage Build to drastically reduce image size, verify the artifact by running it, and finally push the optimized image to the company's internal registry.
+
+Task
+The application code is located in /home/user/student/assignments/pipeline/. This directory contains the app, a heavy logs/ folder, and a .git/ history folder.
+
+1. Optimize Build Context:
+
+Create a .dockerignore file.
+Configure it to explicitly exclude the logs/ directory and the .git/ directory to prevent them from being sent to the Docker daemon.
+2. Create Multistage Dockerfile:
+
+Create a Dockerfile with two stages:
+
+Stage 1 (Builder): Use python:3.9-slim. Install dependencies listed in requirements.txt to a specific location (/app/deps).
+
+Stage 2 (Runtime): Use python:3.9-slim as the base. Copy only the installed dependencies from the Builder stage.
+
+Note: Keep in mind dependencies will be in a particular folder, so we must ensure the runtime environment knows where to look for them.
+
+Goal: The final image must be clean and not contain build tools or cache files.
+
+3. Build & Verify Artifact:
+
+Build the image with the tag weather-api:prod.
+Run Verification: Start a container named test-run in detached mode from this image. Map the host port 8080 to the container's internal port 5000 to confirm it works.
+4. Ship to Registry:
+
+Once verified, tag the image as localhost:5000/weather-api:prod.
+Push the image to the local registry.
+Expected Outcome
+.dockerignore exists and excludes heavy files.
+Dockerfile uses Multistage syntax (COPY --from=…).
+A container named test-run is active on port 8080.
+The image is successfully pushed to the local registry. -->
+
+
+
+
+
+FROM python:3.9-slim AS builder                                                                
+WORKDIR /app                                                                                   
+COPY requirements.txt .                                                                        
+RUN pip install --no-cache-dir --target /app/deps -r requirements.txt                          
+# Multistage                                                                                   
+FROM python:3.9-slim                                                                           
+WORKDIR /app                                                                                   
+ENV PYTHONPATH=/app/deps                                                                       
+COPY --from=builder /app/deps /app                                                             
+COPY app.py .                                                                                  
+EXPOSE 5000                                                                                    
+CMD ["python", "app.py"]  
+
+
+
+Command used to complete this task 
+pwd
+    6  vi .dockerignore
+    7  vi Dockerfile
+    8  vi Dockerfile
+    9  vi Dockerfile
+   10  docker build -t weather-api:prod
+   11  docker build -t weather-api:prod .
+   12  vi Dockerfile
+   13  docker build -t weather-api:prod .
+   14  docker run -d --name test-run -p 8080:5000 weather-api:prod
+   15  docker ps
+   16  docker exec -it b54b79432850 bash
+   17  curl test-run
+   18  curl http://test-run:8080
+   19  curl http://localhost:8080
+   20  docker ps
+   21  curl http://localhost:8080
+   22  docker log test-run
+   23  docker logs test-run
+   24  docker images 
+   25  docker tag weather-api:prod localhost:5000/weather-api:prod
+   26  docker push localhost:5000/weather-api:prod
+   27  docker tag localhost:5000/weather-api:prod hxer3236/multistage-PythonImage
+   28  docker tag localhost:5000/weather-api:prod haxer3236/multistage-pythonImage
+   29  docker tag localhost:5000/weather-api:prod haxer3236/multistage-python-image
+   30  docker push haxer3236/multistage-python-image
+   31  docke rlogin
+   32  docke login
+   33  docker login
+   34  docker logout
+   35  docker login
+   36  docker push haxer3236/multistage-python-image
+   37  vi Dockerfile 
+   38  history

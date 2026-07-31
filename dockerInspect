@@ -1,0 +1,6 @@
+#to get the RepoDigests value 
+docker inspect --format="{{.RepoDigests}}" myapp:stable
+# to get the digest value starting from sha256 format 
+docker inspect --format="{{.RepoDigests}}" myapp:stable | awk -F'@' {'print $2'} |sed 's/]//g'
+#give the digests value for all images
+docker images --digests

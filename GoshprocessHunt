@@ -1,0 +1,88 @@
+Scenario:
+A container named rogue-app has gone rogue and is consuming excessive system resources. However, the Docker Daemon API is unresponsive—meaning standard commands like docker stop, docker kill, and docker inspect are hanging or unavailable.
+
+You must bypass the Docker CLI entirely and manually terminate the container's process by hunting it down on the host OS. To do this safely (without killing the wrong process), you must find the container's Host PID (Process ID) by reading Docker's internal metadata files on the disk.
+
+Task
+Working directory: /home/user/runtime-lab/
+
+1. Navigate to Docker Metadata:
+
+Docker stores container configuration and state on the disk at /var/lib/docker/containers/.
+Navigate to this directory (requires root/sudo privileges).
+2. Identify the Container Folder:
+
+Inside this directory, there are folders with long hexadecimal names (Container IDs). You do not know the ID yet, only the name rogue-app.
+You must search inside the config.v2.json file located in each folder.
+Find the specific config.v2.json file that contains the string "Name":"/rogue-app".
+3. Extract Critical IDs:
+
+Once you find the correct JSON file:
+Container ID: This is the name of the parent folder containing the config file.
+Host PID: Look for the key "Pid" inside the State section of the JSON file.
+4. Terminate the Process:
+
+Verify that a process with this Host PID is running on the system.
+Kill this process manually using the kill command.
+5. Report Findings:
+
+Create a file named forensic_report.txt in /home/user/runtime-lab/.
+Line 1: Paste the full Container ID you found.
+Line 2: Paste the Host PID you killed.
+Expected Outcome
+The process associated with rogue-app is no longer running.
+forensic_report.txt contains the correct Container ID and PID.
+Constraint: You strictly cannot use docker stop, docker kill, or docker inspect commands.
+
+
+Command used in 
+
+h-5.1$ history 
+    1  ls
+    2  cd /var/lib/docker/containers/
+    3  sudo cd /var/lib/docker/containers/
+    4  sudo cd /var/lib/docker/containers/
+    5  sudo cd -s /var/lib/docker/containers/
+    6  pwd
+    7  ls /var/lib/docker/containers/
+    8  sudo ls /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee~
+    9  sudo cd /var/lib/docker/containers/
+   10  sudo -s cd /var/lib/docker/containers/
+   11  pwd
+   12  sudo cd /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee
+   13  sudo ls /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee
+   14  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json
+   15  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep pid
+   16  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep Pid
+   17  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep Pid
+   18  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep "Pid"
+   19  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep "Pid" 
+   20  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep "Pid" | cut -d':' f2
+   21  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep "Pid" | cut -d':' f2
+   22  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid"[0-9]*' | cut -d':' f2
+   23  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d':' f2
+   24  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' f2
+   25  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f2
+   26  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1 -f2
+   27  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1,-f2
+   28  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1f2
+   29  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1 f2
+   30  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1,f2
+   31  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | cut -d ':' -f1,-f2
+   32  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*'
+   33  sudo cat /var/lib/docker/containers/172578bc925ff01bcf5ab3a6c8d291c210c21c82764119d2760878de682226ee/config.v2.json |grep -o '"Pid":[0-9]*' | sed "s/"//d"
+   34  ps -aux | 673
+   35  ps -aux | grep 673
+   36  ps -aux | grep "673"
+   37  ps aux | grep "673"
+   38  kill -9 673
+   39  sudo kill -9 673
+   40  ps aux | grep "673"
+   41  ls
+   42  sudo cat /var/lib/docker/containers/
+   43  sudo ls /var/lib/docker/containers/
+   44  sudo ls /var/lib/docker/containers/ > /home/user/runtime-lab/forensic_report.txt
+   45  echo "673">> /home/user/runtime-lab/forensic_report.txt
+   46  cat /home/user/runtime-lab/forensic_report.txt
+   47  history 
+bash-5.1$ 
