@@ -1,0 +1,98 @@
+Pushing file: ./DockerVolumeCommand
+On branch master
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .last_pushed
+	modified:   BackupPipeline
+	modified:   DockerPythonfile
+	modified:   GoshprocessHunt
+	modified:   MCQ
+	deleted:    Non-root_Container_PermissionIssue
+	modified:   Python_WebAPI_Dockerfile
+	deleted:    Runtime Configuration_ENV_Ports
+	deleted:    Shell_Form&Exec_Form_Docker file
+	modified:   auto_push.sh
+	modified:   createContainer
+	modified:   createOwnNetwor
+	modified:   docekrIntsalltion
+	modified:   dockerInspect
+	modified:   imageHardiningMultistage
+	deleted:    multiStage-Image
+	modified:   pullDockerImage
+	modified:   readOnlyContainer
+	modified:   secrestKeyRecovery
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	Non_root_Container_PermissionIssue
+	Runtime_Configuration_ENV_Ports
+	Shell_Form_Exec_Form_Docker_file
+	change.sh
+	cron.log
+	multiStage_Image
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Everything up-to-date
+./auto_push.sh: line 44: : No such file or directory
+Successfully pushed: ./DockerVolumeCommand
+Processing file: ./MCQ
+[master 3d0f390] Add MCQ
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   46aa1c6..3d0f390  master -> master
+Successfully pushed: ./MCQ
+Processing file: ./Non_root_Container_PermissionIssue
+[master bf0b2cb] Add Non_root_Container_PermissionIssue
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Non_root_Container_PermissionIssue
+To github.com:Haxer3236/DockerLab.git
+   3d0f390..bf0b2cb  master -> master
+Successfully pushed: ./Non_root_Container_PermissionIssue
+Processing file: ./Python_WebAPI_Dockerfile
+[master b9a9af5] Add Python_WebAPI_Dockerfile
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   bf0b2cb..b9a9af5  master -> master
+Successfully pushed: ./Python_WebAPI_Dockerfile
+Processing file: ./Runtime_Configuration_ENV_Ports
+[master 24b4df3] Add Runtime_Configuration_ENV_Ports
+ 1 file changed, 53 insertions(+)
+ create mode 100644 Runtime_Configuration_ENV_Ports
+To github.com:Haxer3236/DockerLab.git
+   b9a9af5..24b4df3  master -> master
+Successfully pushed: ./Runtime_Configuration_ENV_Ports
+Processing file: ./Shell_Form_Exec_Form_Docker_file
+[master 1a23356] Add Shell_Form_Exec_Form_Docker_file
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Shell_Form_Exec_Form_Docker_file
+To github.com:Haxer3236/DockerLab.git
+   24b4df3..1a23356  master -> master
+Successfully pushed: ./Shell_Form_Exec_Form_Docker_file
+Processing file: ./auto_push1.sh
+[master 4657fa7] Add auto_push1.sh
+ 1 file changed, 65 insertions(+)
+ create mode 100644 auto_push1.sh
+To github.com:Haxer3236/DockerLab.git
+   1a23356..4657fa7  master -> master
+Successfully pushed: ./auto_push1.sh
+Processing file: ./change.sh
+[master f1565dd] Add change.sh
+ 1 file changed, 5 insertions(+)
+ create mode 100644 change.sh
+To github.com:Haxer3236/DockerLab.git
+   4657fa7..f1565dd  master -> master
+Successfully pushed: ./change.sh
+Processing file: ./createContainer
+[master 0c7d96c] Add createContainer
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   f1565dd..0c7d96c  master -> master
+Successfully pushed: ./createContainer
+Processing file: ./createOwnNetwor
+[master feb4051] Add createOwnNetwor
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   0c7d96c..feb4051  master -> master
+Successfully pushed: ./createOwnNetwor
+Processing file: ./cron.log
