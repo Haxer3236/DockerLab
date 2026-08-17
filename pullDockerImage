@@ -10,3 +10,4 @@ docker tag old_imagename newImageName
 docker run -p hostPort:containerPort myimage
 docker run -p 8080:5000 myimage
 
+
