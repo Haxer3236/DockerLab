@@ -96,3 +96,61 @@ To github.com:Haxer3236/DockerLab.git
    0c7d96c..feb4051  master -> master
 Successfully pushed: ./createOwnNetwor
 Processing file: ./cron.log
+[master b12f915] Add cron.log
+ 1 file changed, 98 insertions(+)
+ create mode 100644 cron.log
+To github.com:Haxer3236/DockerLab.git
+   feb4051..b12f915  master -> master
+Successfully pushed: ./cron.log
+Processing file: ./dockerInspect
+[master 39dbb56] Add dockerInspect
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   707b12f..39dbb56  master -> master
+Successfully pushed: ./dockerInspect
+<----------------------------------------------------------------------------->
+Processing file: ./multiStage_Image
+[master c604455] Add multiStage_Image
+ 1 file changed, 92 insertions(+)
+ create mode 100644 multiStage_Image
+To github.com:Haxer3236/DockerLab.git
+   ceb72ad..c604455  master -> master
+Successfully pushed: ./multiStage_Image
+<----------------------------------------------------------------------------->
+Processing file: ./pullDockerImage
+[master dfa19cd] Add pullDockerImage
+ 1 file changed, 1 insertion(+)
+To github.com:Haxer3236/DockerLab.git
+   c604455..dfa19cd  master -> master
+Successfully pushed: ./pullDockerImage
+<----------------------------------------------------------------------------->
+Processing file: ./readOnlyContainer
+[master b4ae04a] Add readOnlyContainer
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   dfa19cd..b4ae04a  master -> master
+Successfully pushed: ./readOnlyContainer
+<----------------------------------------------------------------------------->
+Processing file: ./secrestKeyRecovery
+[master f5c3ee9] Add secrestKeyRecovery
+ 1 file changed, 1 insertion(+)
+To github.com:Haxer3236/DockerLab.git
+   b4ae04a..f5c3ee9  master -> master
+Successfully pushed: ./secrestKeyRecovery
+<----------------------------------------------------------------------------->
+All files have already been processed.
+Processing file: ./DockerPythonfile
+[master 9a52b04] Add DockerPythonfile
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To github.com:Haxer3236/DockerLab.git
+   f5c3ee9..9a52b04  master -> master
+Successfully pushed: ./DockerPythonfile
+<----------------------------------------------------------------------------->
+Processing file: ./DockerVolumeCommand
+No changes found in ./DockerVolumeCommand
+Processing file: ./GoshprocessHunt
+No changes found in ./GoshprocessHunt
+Processing file: ./Non_root_Container_PermissionIssue
+No changes found in ./Non_root_Container_PermissionIssue
+Processing file: ./Python_WebAPI_Dockerfile
+No changes found in ./Python_WebAPI_Dockerfile

@@ -63,3 +63,4 @@ git push origin master
 echo "$NEXT" > "$STATE_FILE"
 
 echo "Successfully pushed: $FILE"
+echo "<----------------------------------------------------------------------------->"
